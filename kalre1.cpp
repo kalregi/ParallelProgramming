@@ -2,6 +2,7 @@
 #include <iostream>
 #include <math.h>
 #include <numeric>
+#include <sstream>
 
 // Global constants in the equations are
 double rkold[3];
@@ -32,6 +33,8 @@ double gama;
 int itercount;
 double bandwidth;
 double executionCount;
+
+std::stringstream result;
 
 // main program start
 int main(int argc, char **argv) {
@@ -96,7 +99,7 @@ int main(int argc, char **argv) {
     double *wk2 = new double[(nx0 + 4) * (nx1 + 4)];
     double *wk3 = new double[(nx0 + 4) * (nx1 + 4)];
     
-    std::cout << "Name" << "\t" << "Elapsed time (s)" << "\t" << "Execution count" << "\t" << "Achieved bandwidth (GB/s)" << "\n";
+    result << "Name" << "\t" << "Elapsed time (s)" << "\t" << "Execution count" << "\t" << "Achieved bandwidth (GB/s)" << "\n";
     
     // Initialisation
     // writing dataset rho with (i,j) access
@@ -125,7 +128,7 @@ int main(int argc, char **argv) {
     executionCount = (nx1 + 4)*(nx0 + 4);
     bandwidth = executionCount * 4 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
     
-    std::cout << "Initialisation" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+    result << "Initialisation" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
     
     
     // Apply boundary conditions
@@ -161,7 +164,7 @@ int main(int argc, char **argv) {
     executionCount = (nx1 + 4)*(3-2);
     bandwidth = executionCount * 4 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
     
-    std::cout << "ABC Left" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+    result << "ABC Left" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
     
     // Right
     // writing dataset rho with (i+1,j), (i+2,j) access
@@ -195,7 +198,7 @@ int main(int argc, char **argv) {
     executionCount = (nx1 + 4)*(nx0 + 2-(nx0 + 1));
     bandwidth = executionCount * 4 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
     
-    std::cout << "ABC Right" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+    result << "ABC Right" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
     
     
     // Top
@@ -230,7 +233,7 @@ int main(int argc, char **argv) {
     executionCount = (3-2)*(nx0 + 4);
     bandwidth = executionCount * 4 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
     
-    std::cout << "ABC Top" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+    result << "ABC Top" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
     
     
     // Bottom
@@ -265,7 +268,7 @@ int main(int argc, char **argv) {
     executionCount = (nx1 + 2 -(nx1 + 1))*(nx0 + 4);
     bandwidth = executionCount * 4 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
     
-    std::cout << "ABC Bottom" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+    result << "ABC Bottom" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
     
     
     // Record start time
@@ -303,7 +306,7 @@ int main(int argc, char **argv) {
             executionCount = (nx0 + 4)*(nx0 + 4);
             bandwidth = executionCount * 8 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
             
-            std::cout << "Save equations" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+            result << "Save equations" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
         }
         // Runge-Kutta time-stepper
         for (int stage = 0; stage < 3; stage++) {
@@ -348,7 +351,7 @@ int main(int argc, char **argv) {
                 executionCount = (nx1 + 4)*(nx0 + 4);
                 bandwidth = executionCount * 8 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
                 
-                std::cout << "Grouped Formula Evaluation" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+                result << "Grouped Formula Evaluation" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
                 
             }
             
@@ -650,7 +653,7 @@ int main(int argc, char **argv) {
                 executionCount = (nx1)*(nx0);
                 bandwidth = executionCount * 12 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
                 
-                std::cout << "Residual of equation" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+                result << "Residual of equation" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
                 
             }
             
@@ -693,7 +696,7 @@ int main(int argc, char **argv) {
                 executionCount = (nx1)*(nx0);
                 bandwidth = executionCount * 8 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
                 
-                std::cout << "RK new (subloop) update" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+                result << "RK new (subloop) update" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
                 
             }
             
@@ -734,7 +737,7 @@ int main(int argc, char **argv) {
                 executionCount = (nx1+4)*(nx0+4);
                 bandwidth = executionCount * 8 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
                 
-                std::cout << "RK old update" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+                result << "RK old update" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
                 
             }
             
@@ -777,7 +780,7 @@ int main(int argc, char **argv) {
                 executionCount = (nx1+4)*(3-2);
                 bandwidth = executionCount * 4 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
                 
-                std::cout << "ABC2 Left" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+                result << "ABC2 Left" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
             }
             
             // Right
@@ -817,7 +820,7 @@ int main(int argc, char **argv) {
                 executionCount = (nx1+4)*(nx0+2-(nx0+1));
                 bandwidth = executionCount * 4 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
                 
-                std::cout << "ABC2 Right" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+                result << "ABC2 Right" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
             }
             
             // Top
@@ -857,7 +860,7 @@ int main(int argc, char **argv) {
                 executionCount = (3-2)*(nx0+4);
                 bandwidth = executionCount * 4 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
                 
-                std::cout << "ABC2 Top" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+                result << "ABC2 Top" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
             }
             
             // Bottom
@@ -897,7 +900,7 @@ int main(int argc, char **argv) {
                 executionCount = (nx1+2-(nx1+1))*(nx0+4);
                 bandwidth = executionCount * 4 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
                 
-                std::cout << "ABC2 Bottom" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+                result << "ABC2 Bottom" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
             }
         } // End of stage loop
         
@@ -920,7 +923,7 @@ int main(int argc, char **argv) {
             executionCount = (nx1+4)*(nx0+4);
             bandwidth = executionCount * 2 * sizeof(double) * (1/elapsed_seconds.count())/1073741824;
             
-            std::cout << "Sum" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
+            result << "Sum" << "\t" << elapsed_seconds.count() << "\t" << executionCount << " \t" << bandwidth << " \n";
         }
         std::cout << "Checksums: " << sqrt(sum) << " " << sqrt(sum2) << "\n";
         
@@ -933,7 +936,10 @@ int main(int argc, char **argv) {
     std::cout << "\nTimings are:\n";
     std::cout << "-----------------------------------------\n";
     // TODO: per-loop statistics come here
+    std::cout << result.str() << "\n";
     std::cout << "Total Wall time " << diff.count() << " seconds\n";
+    
+
     
     delete[] rho;
     delete[] rhou0;
